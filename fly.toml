@@ -1,21 +1,21 @@
-# fly.toml file generated for redis-tlsnoauth on 2020-11-11T13:01:50Z
+# fly.toml file generated for redis-example on 2020-10-30T20:01:11-05:00
 
-app = "redis-tlsnoauth"
+app = "redis-example"
 
 [[mounts]]
 source      = "redis_server"
 destination = "/data"
 
 [[services]]
-  internal_port = 6379
-  protocol = "tcp"
+internal_port = 7379
+protocol      = "tcp"
 
   [services.concurrency]
   hard_limit = 25
   soft_limit = 20
 
   [[services.ports]]
-  handlers = [ "tls" ]
+  handlers = []
   port     = "10000"
 
   [[services.tcp_checks]]
