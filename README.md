@@ -24,7 +24,7 @@ sysctl net.core.somaxconn=1024
 redis-server /usr/local/etc/redis/redis.conf --requirepass $REDIS_PASSWORD
 ```
 
-The two `sysctl` calls set up the environment so that Redis doesn't throw warnings about memory and connections. The script then then starts up the Redis server, giving it a password to require and a config file to boot with. The Redis config is simple – it defines IPs to listen on, persistence options:
+The two `sysctl` calls set up the environment so that Redis doesn't throw warnings about memory and connections. The script then starts up the Redis server, giving it a password to require and a config file to boot with. The Redis config is simple – it defines IPs to listen on, persistence options:
 
 ```conf
 # listen on all ipv4 and ipv6 addresses
@@ -133,7 +133,7 @@ destination = "/data"
 When the app starts, that volume will be mounted on /data.
 
 ## Deploy
-We're ready to deploy now. Run `fly deploy` and the Redis app will be created and launched on the cloud. Once complete you can connect to it using the `redis-cli` command or any other redis client.  Just remember to use port 10000, not the default port.
+We're ready to deploy now. Run `fly deploy` and the Redis app will be created and launched on the cloud. Once complete you can connect to it using the `redis-cli` command or any other Redis client. Just remember to use port 10000, not the default port.
 
 ```
 redis-cli -h redis-example.fly.dev \
@@ -154,35 +154,40 @@ Here are the commands you'll need to create certificates for this Redis example:
 1. Create `certs` directory for the Docker image:
   
     `mkdir -p certs`
+
 2. Generate server certificates:
 
    `mkcert -key-file certs/redis-server.key -cert-file certs/redis-server.crt redis-example.fly.dev`
+
 3. Generate a client certificate:
 
     `mkcert --client -key-file redis-client.key -cert-file redis-client.crt redis-example.fly.dev`
+    
 4. Copy the root CA certificate:
 
     `cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.crt`
 
 When you're done you should see a directory layout like this:
 
-* `/certs`
-    * `/redis-server.crt`
-    * `/redis-server.key`
-    * `/rootCA.crt`
-* `/redis-client.crt`
-* `/redis-client.key`
+```
+├── certs
+│   ├── redis-server.crt
+│   ├── redis-server.key
+│   └── rootCA.crt
+├── redis-client.crt
+└── redis-client.key
+```
 
-Then, we can pop on into the `redis.conf` to configure TLS:
+Then, we can pop into our `redis.conf` to configure TLS by adding:
 
 ```conf
 tls-port 7379
-tls-cert-file /etc/certs/server.pem
-tls-key-file /etc/certs/server-key.pem
+tls-cert-file /etc/certs/redis-server.crt
+tls-key-file /etc/certs/seredis-server.key
 tls-ca-cert-file /etc/certs/rootCA.crt
 ```
 
-This configures Redis to listen on port 7379, which means updating the internal port in `fly.toml`:
+This configures Redis to listen on port 7379, which means changing the internal port in `fly.toml`:
 
 ```toml
 [[services]]
@@ -190,7 +195,7 @@ internal_port = 7379
 ...
 ```
 
-Now run `fly deploy` again, and enjoy the relaxation of a locked down Redis service.
+Now run `fly deploy` again, and enjoy the relaxation of a locked-down Redis service.
 
 The `redis-cli` CLI has support for TLS, you can connect with this command:
 
