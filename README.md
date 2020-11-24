@@ -141,31 +141,41 @@ redis-cli -h redis-example.fly.dev \
           --askpass
 ```
 
+You'll immediately be prompted to enter the password you previously set.
+
 ## Lock it down with TLS
 
-So far, our Redis configuration is good for a demo. But running Redis on a public port with password authentication is insecure.
+So far, our Redis configuration is good for a demo. But running Redis on an unencrypted public port with password authentication is insecure.
 
-Redis has built in TLS support, we generate certificates and configure the server to require client certificate validation. This is roughly the equivalent security level as running behind a VPN.
+Redis has built-in TLS support, we generate certificates and configure the server to require client certificate validation. This is roughly the equivalent security level as running behind a VPN.
 
 Generating certs is simple with the excellent [`mkcert`](https://github.com/FiloSottile/mkcert) utility. Once you install `mkcert`, you'll get a local certificate authority to create your own certificates with.
 
 Here are the commands you'll need to create certificates for this Redis example:
 
 1. Create `certs` directory for the Docker image:
-  
-    `mkdir -p certs`
+
+```
+mkdir -p certs`
+```
 
 2. Generate server certificates:
 
-   `mkcert -key-file certs/redis-server.key -cert-file certs/redis-server.crt redis-example.fly.dev`
+```
+mkcert -key-file certs/redis-server.key -cert-file certs/redis-server.crt redis-example.fly.dev
+```
 
 3. Generate a client certificate:
 
-    `mkcert --client -key-file redis-client.key -cert-file redis-client.crt redis-example.fly.dev`
-    
+```
+mkcert --client -key-file redis-client.key -cert-file redis-client.crt redis-example.fly.dev`
+```
+
 4. Copy the root CA certificate:
 
-    `cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.crt`
+```
+cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.pem
+```
 
 When you're done you should see a directory layout like this:
 
@@ -184,7 +194,7 @@ Then, we can pop into our `redis.conf` to configure TLS by adding:
 tls-port 7379
 tls-cert-file /etc/certs/redis-server.crt
 tls-key-file /etc/certs/seredis-server.key
-tls-ca-cert-file /etc/certs/rootCA.crt
+tls-ca-cert-file /etc/certs/rootCA.pem
 ```
 
 This configures Redis to listen on port 7379, which means changing the internal port in `fly.toml`:
@@ -209,6 +219,7 @@ redis-cli -h redis-example.fly.dev \
           --askpass
 ```
 
+You
 ## Discuss
 
 * You can discuss this example on the [community.fly.io](https://community.fly.io/t/new-redis-example/366) topic.
