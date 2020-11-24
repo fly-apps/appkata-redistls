@@ -154,18 +154,30 @@ Generating certs is simple with the excellent [`mkcert`](https://github.com/Filo
 Here are the commands you'll need to create certificates for this Redis example:
 
 1. Create `certs` directory for the Docker image:
+
+<br/>
+
 ```
 mkdir -p certs
 ```
 2. Generate server certificates:
+
+<br/>
+
 ```
 mkcert -key-file certs/redis-server.key -cert-file certs/redis-server.crt redis-example.fly.dev
 ```
 3. Generate a client certificate:
+
+<br/>
+
 ```
 mkcert --client -key-file redis-client.key -cert-file redis-client.crt redis-example.fly.dev
 ```
 4. Copy the root CA certificate:
+
+<br/>
+
 ```
 cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.pem
 ```
