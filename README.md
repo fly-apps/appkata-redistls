@@ -212,7 +212,7 @@ redis-cli -h redis-example.fly.dev \
           --askpass
 ```
 
-As before, you will be prompted for a password, but now the connection has already been authenicated by the TLS handshaking exchanging the client certificate.
+As before, you will be prompted for a password, but now the connection has already been authenticated by the TLS handshaking exchanging the client certificate.
 
 ## Discuss
 
