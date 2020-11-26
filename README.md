@@ -3,6 +3,8 @@
 
 Deploying Redis with TLS encryption using Fly.
 
+[Read this guide on Fly.](https://fly.io/docs/app-guides/redistls/)
+
 <!---- cut here --->
 
 ## Rationale
